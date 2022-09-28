@@ -100,3 +100,31 @@ def post_edit(request, post_id):
         return redirect('posts:post_detail', post_id)
     return render(request, 'posts/create_post.html',
                   {"form": form, 'post': post, })
+
+
+@login_required
+def follow_index(request):
+    posts = Post.objects.filter(
+        author__following__user=request.user)
+    page_obj = pagination(request, posts)
+    context = {'page': page_obj}
+    return render(request, 'posts/follow.html', context)
+
+
+@login_required
+def profile_follow(request, username):
+    author = get_object_or_404(User, username=username)
+    if author != request.user:
+        Follow.objects.get_or_create(user=request.user, author=author)
+    return redirect('posts:profile', author)
+
+
+@login_required
+def profile_unfollow(request, username):
+    follow = get_object_or_404(
+        Follow,
+        user=request.user,
+        author__username=username
+    )
+    follow.delete()
+    return redirect('posts:profile', username)
