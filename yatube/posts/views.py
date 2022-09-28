@@ -3,7 +3,6 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.core.paginator import Paginator
 from django.shortcuts import get_object_or_404, redirect, render
-from django.views.decorators.cache import cache_page
 
 from yatube.settings import PAGINATION_NUM
 
@@ -57,6 +56,32 @@ def profile(request, username):
                'page_obj': page_obj,
                }
     return render(request, 'posts/profile.html', context)
+
+
+def post_detail(request, post_id):
+    post = get_object_or_404(Post, id=post_id)
+    comments = post.comments.filter(active=True)
+    form = CommentForm()
+    template = 'posts/post_detail.html'
+    context = {
+        'post': post,
+        'requser': request.user,
+        'comments': comments,
+        'form': form,
+    }
+    return render(request, template, context)
+
+
+@login_required
+def add_comment(request, post_id):
+    post = get_object_or_404(Post, id=post_id)
+    form = CommentForm(request.POST or None)
+    if form.is_valid():
+        comment = form.save(commit=False)
+        comment.author = request.user
+        comment.post = post
+        comment.save()
+    return redirect('posts:post_detail', post_id=post_id)
 
 
 def post_view(request, post_id):
