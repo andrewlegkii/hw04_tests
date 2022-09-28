@@ -1,44 +1,27 @@
 import os
 
-import environ
-
-env = environ.Env()
-
-environ.Env.read_env()
-
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
 
 SECRET_KEY = 'noooooooooooooo'
 
-DEBUG = env('DEBUG', default='True') == 'True'
 
-ALLOWED_HOSTS = env(
-    'ALLOWED_HOSTS', default='localhost').split(', ')
+DEBUG = True
 
-CSRF_FAILURE_VIEW = 'core.views.csrf_failure'
+ALLOWED_HOSTS = []
 
-EMAIL_BACKEND = 'django.core.mail.backends.filebased.EmailBackend'
-
-EMAIL_FILE_PATH = os.path.join(BASE_DIR, 'sent_emails')
-
-LOGIN_URL = 'users:login'
-
-LOGIN_REDIRECT_URL = 'posts:index'
-
-# LOGOUT_REDIRECT_URL = 'posts:index'
 
 INSTALLED_APPS = [
-    'users.apps.UsersConfig',
-    'posts.apps.PostsConfig',
     'about.apps.AboutConfig',
     'core.apps.CoreConfig',
+    'users.apps.UsersConfig',
+    'posts.apps.PostsConfig',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'sorl.thumbnail',
 ]
 
 MIDDLEWARE = [
@@ -52,11 +35,11 @@ MIDDLEWARE = [
 ]
 
 ROOT_URLCONF = 'yatube.urls'
-TEMPLATES_DIR = os.path.join(BASE_DIR, 'templates')
+
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [TEMPLATES_DIR],
+        'DIRS': [os.path.join(BASE_DIR, 'templates')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -66,17 +49,15 @@ TEMPLATES = [
                 'django.contrib.messages.context_processors.messages',
                 'core.context_processors.year.year',
             ],
+
         },
     },
 ]
 
-CACHES = {
-    'default': {
-        'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
-    }
-}
-
 WSGI_APPLICATION = 'yatube.wsgi.application'
+
+APPEND_SLASH = True
+
 
 DATABASES = {
     'default': {
@@ -84,6 +65,7 @@ DATABASES = {
         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
     }
 }
+
 
 AUTH_PASSWORD_VALIDATORS = [
     {
@@ -100,6 +82,7 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+
 LANGUAGE_CODE = 'ru'
 
 TIME_ZONE = 'UTC'
@@ -110,11 +93,14 @@ USE_L10N = True
 
 USE_TZ = True
 
-DATE_FORMAT = 'd E Y'
 
 STATIC_URL = '/static/'
+STATICFILES_DIRS = (os.path.join(BASE_DIR, "static"),)
+LOGIN_URL = 'users:login'
+LOGIN_REDIRECT_URL = 'posts:index'
 
-STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
+EMAIL_BACKEND = "django.core.mail.backends.filebased.EmailBackend"
+EMAIL_FILE_PATH = os.path.join(BASE_DIR, "sent_emails")
 
 PAGINATION_NUM = 10
 
