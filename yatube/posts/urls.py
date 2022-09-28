@@ -1,18 +1,49 @@
-# posts/urls.py
 from django.urls import path
-
-from . import views
+from posts import views
 
 app_name = 'posts'
+
 urlpatterns = [
-    path('posts/<post_id>/edit/', views.post_edit, name='edit'),
-    path('create/', views.post_create, name='create'),
-    path('group/<slug:slug>/', views.group_posts, name='group_list'),
-    path('', views.index, name='index'),
-    path('profile/<str:username>/', views.profile, name='profile'),
-    path('posts/<int:post_id>/', views.post_detail, name='post_detail'),
-    path('posts/<int:post_id>/comment', views.add_comment, name='add_comment'),
-    path('follow/', views.follow_index, name='follow_index'),
+    path(
+        '',
+        views.index,
+        name='index'
+    ),
+    path(
+        'group/<slug:slug>/',
+        views.group_posts,
+        name='group_list'
+    ),
+    path(
+        'profile/<str:username>/',
+        views.profile,
+        name='profile'
+    ),
+    path(
+        'posts/<int:post_id>/',
+        views.post_view,
+        name='post_detail'
+    ),
+    path(
+        'create/',
+        views.post_create,
+        name='post_create'
+    ),
+    path(
+        'posts/<int:post_id>/edit/',
+        views.post_edit,
+        name='post_edit'
+    ),
+    path(
+        'posts/<int:post_id>/comment/',
+        views.add_comment,
+        name='add_comment'
+    ),
+    path(
+        'follow/',
+        views.follow_index,
+        name='follow_index'
+    ),
     path(
         'profile/<str:username>/follow/',
         views.profile_follow,
@@ -21,6 +52,13 @@ urlpatterns = [
     path(
         'profile/<str:username>/unfollow/',
         views.profile_unfollow,
-        name="profile_unfollow"
+        name='profile_unfollow'
     ),
+    path(
+        "404/",
+        views.page_not_found,
+        name="404"),
+    path("500/",
+        views.server_error,
+        name="500")
 ]
