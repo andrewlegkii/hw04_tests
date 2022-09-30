@@ -3,7 +3,6 @@ from django.core.paginator import Paginator
 from django.shortcuts import get_object_or_404, redirect, render
 from posts.forms import CommentForm, PostForm
 from posts.models import Follow, Group, Post, User
-from django.views.decorators.cache import cache_page
 
 from yatube.settings import PAGINATION_NUM
 
@@ -14,7 +13,7 @@ def pagination(request, post_list, num_on_page):
     page_obj = paginator.get_page(page_number)
     return page_obj
 
-@cache_page(20)
+
 def index(request):
     """View - функция для главной страницы проекта."""
 
