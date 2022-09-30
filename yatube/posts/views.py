@@ -15,7 +15,6 @@ def pagination(request, post_list, num_on_page):
     return page_obj
 
 
-@cache_page(20)
 def index(request):
     """View - функция для главной страницы проекта."""
 

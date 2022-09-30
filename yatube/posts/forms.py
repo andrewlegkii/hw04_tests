@@ -4,14 +4,17 @@ from posts.models import Comment, Group, Post
 
 
 class PostForm(forms.ModelForm):
-    group = forms.ModelChoiceField(queryset=Group.objects,
-                                   empty_label='Группа не выбрана',
-                                   required=False,
-                                   label='Группа')
-
     class Meta:
         model = Post
-        fields = ('text', 'group', 'image')
+        fields = ('text', 'group',)
+        help_texts = {
+            'text': 'Тут пишите текст поста',
+            'group': 'Тут выбираете группу, к которой принадлежит пост',
+        }
+        labels = {
+            'text': 'Текст',
+            'group': 'Группа',
+        }
 
 
 class CommentForm(forms.ModelForm):
@@ -24,3 +27,4 @@ class CommentForm(forms.ModelForm):
         help_texts = {
             'text': 'Текст нового комментария',
         }
+
