@@ -1,101 +1,83 @@
+from django.contrib.auth import get_user_model
+from django.test import TestCase, Client
+
 from http import HTTPStatus
-
-from django.core.cache import cache
-from django.test import Client, TestCase
-
-from posts.models import Group, Post, User
+from posts.models import Post, Group
+User = get_user_model()
 
 
-class StatusURLTests(TestCase):
+class PostURLTests(TestCase):
     @classmethod
     def setUpClass(cls):
         super().setUpClass()
-        cls.user = User.objects.create_user(username='auth')
+
+        cls.user = User.objects.create(username="Test_User",)
+
         cls.group = Group.objects.create(
-            title='Тестовая группа',
-            slug='test-slug',
-            description='Тестовое описание',
+            id="10",
+            title="группа",
+            slug="one_group",
+            description="проверка описания",
         )
+
         cls.post = Post.objects.create(
             text='Тестовый текст',
-            author=cls.user
+            author=User.objects.get(username="Test_User"),
+            group=Group.objects.get(title="группа"),
+        )
+
+        cls.post_url = f'/posts/{cls.post.id}/'
+        cls.post_edit_url = f'/posts/{cls.post.id}/edit/'
+        cls.public_urls = (
+            ('/', 'index.html'),
+            (f'/group/{cls.group.slug}/', 'group.html'),
+            (f'/profile/{cls.user.username}/', 'profile.html'),
+            (cls.post_url, 'post.html'),
+        )
+        cls.private_urls = (
+            ('/create/', 'create_post.html'),
+            (cls.post_edit_url, 'create_post.html')
         )
 
     def setUp(self):
-        self.templates_url_names = {
-            '/': 'posts/index.html',
-            f'/group/{self.group.slug}/': 'posts/group_list.html',
-            f'/posts/{self.post.id}/': 'posts/post_detail.html',
-            f'/posts/{self.post.id}/edit/': 'posts/create_post.html',
-            '/create/': 'posts/create_post.html',
-            f'/profile/{self.user}/': 'posts/profile.html',
-            '/about/author/': 'about/author.html',
-            '/about/tech/': 'about/tech.html',
-        }
-        self.urls_anonymous_user = [
-            '/',
-            f'/group/{self.group.slug}/',
-            f'/posts/{self.post.id}/',
-            f'/profile/{self.user}/',
-            '/about/author/',
-            '/about/tech/',
-        ]
-        self.template_404 = 'core/404.html'
+        # Создаем неавторизованный клиент
         self.guest_client = Client()
-        self.user = User.objects.create_user(username='HasNoName')
+        # Создаем авторизованый клиент
+        self.user = User.objects.get(username="Test_User")
         self.authorized_client = Client()
         self.authorized_client.force_login(self.user)
-        cache.clear()
 
-    def test_urls_exists_uses_correct_template(self):
-        """Все URL-адреса доступны и используют соответствующий шаблон."""
-        for address, template in self.templates_url_names.items():
-            with self.subTest(address=address):
-                response = self.authorized_client.get(address)
-                self.assertEqual(response.status_code, HTTPStatus.OK)
-                self.assertTemplateUsed(response, template)
+    # Проверяем общедоступные страницы
+    def test_public_pages(self):
+        for data in self.public_urls:
+            print(data[0])
+            response = self.guest_client.get(data[0])
+            self.assertEqual(response.status_code, 200)
 
-    def test_all_pages_exists_at_disired_location(self):
-        """Все страницы доступны авторизованному пользователю."""
-        for url in self.templates_url_names.keys():
+    # Проверяем доступ для авторизованного пользователя и автора
+    def test_private_pages(self):
+        for data in self.private_urls:
+            response = self.authorized_client.get(data[0])
+            self.assertEqual(response.status_code, HTTPStatus.OK)
+
+    # Проверяем статус 404 для авторизованного пользователя
+    def test_task_list_url_redirect_anonymous(self):
+        """Страница /unexisting_page/ не существует."""
+        response = self.authorized_client.get('/unexisting_page/')
+        self.assertEqual(response.status_code, HTTPStatus.NOT_FOUND)
+
+    # Проверка вызываемых шаблонов для каждого адреса
+    def test_urls_uses_correct_template(self):
+        """URL-адрес использует соответствующий шаблон."""
+        templates_url_names = {
+            '/': 'posts/index.html',
+            '/group/one_group/': 'posts/group_list.html',
+            '/profile/Test_User/': 'posts/profile.html',
+            '/posts/1/': 'posts/post_detail.html',
+            '/posts/1/edit/': 'posts/create_post.html',
+            '/create/': 'posts/create_post.html',
+        }
+        for url, template in templates_url_names.items():
             with self.subTest(url=url):
                 response = self.authorized_client.get(url)
-                self.assertEqual(response.status_code, HTTPStatus.OK)
-
-    def test_urls_anonymous_user_exists_at_desired_location(self):
-        """Страницы из списка urls_anonymous_user в SetUp классе доступны
-           неавторизованному пользователю."""
-        for url in self.urls_anonymous_user:
-            with self.subTest(url=url):
-                response = self.guest_client.get(url)
-                self.assertEqual(response.status_code, HTTPStatus.OK)
-
-    def test_post_edit_url_redirect_anonymous_on_auth_login(self):
-        """
-        Страница по адресу /posts/post_id/edit/ доступна и перенаправит
-        анонимного пользователя на страницу логина.
-        """
-        response = self.guest_client.get(
-            f'/posts/{self.post.id}/edit/', follow=True
-        )
-        self.assertEqual(response.status_code, HTTPStatus.OK)
-        self.assertRedirects(
-            response,
-            f'/auth/login/?next=/posts/{self.post.id}/edit/'
-        )
-
-    def test_create_url_redirect_anonymous_on_auth_login(self):
-        """
-        Страница по адресу /create/ доступна и перенаправит анонимного
-        пользователя на страницу логина.
-        """
-        response = self.guest_client.get('/create/', follow=True)
-        self.assertEqual(response.status_code, HTTPStatus.OK)
-        self.assertRedirects(response, '/auth/login/?next=/create/')
-
-    def test_unexisting_page(self):
-        """Запрос к несуществующей странице вернет ошибку 404
-           и при этом будет использован кастомный шаблон."""
-        response = self.guest_client.get('/unexisting_page/')
-        self.assertEqual(response.status_code, HTTPStatus.NOT_FOUND)
-        self.assertTemplateUsed(response, self.template_404)
+                self.assertTemplateUsed(response, template)

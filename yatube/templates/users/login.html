@@ -48,9 +48,7 @@
               <div>
               {{ field|addclass:'form-control' }}
                 {% if field.help_text %}
-                  <small 
-                  id="{{ field.id_for_label }}-help" 
-                  class="form-text text-muted">
+                  <small id="{{ field.id_for_label }}-help" class="form-text text-muted">
                     {{ field.help_text|safe }}
                   </small>
                 {% endif %}
@@ -61,13 +59,11 @@
             <button type="submit" class="btn btn-primary">
               Войти
             </button>
-            <!-- Тест на внимательность. Без переопределения шаблона этого 
-            адреса не существует. Нужно что-то делать, иначе все упадет -->
-            <a 
-            href="{% url 'users:password_reset_form' %}" 
-            class="btn btn-link">
+            <!-- Тест на внимательность. Без переопределения шаблона этого адреса
+            не существует. Нужно что-то делать, иначе все упадет -->
+            <a href="{% url 'users:password_reset_form' %}" class="btn btn-link">
               Забыли пароль?
-            </a>
+            </a>   
           </div>
           </form>
         </div> <!-- card body -->
