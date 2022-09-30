@@ -1,10 +1,11 @@
-from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
 from django.shortcuts import get_object_or_404, redirect, render
 from django.views.decorators.cache import cache_page
 from posts.forms import CommentForm, PostForm
 from posts.models import Follow, Group, Post, User
+
+from yatube.settings import PAGINATION_NUM
 
 
 def pagination(request, post_list, num_on_page):
@@ -19,7 +20,7 @@ def index(request):
     """View - функция для главной страницы проекта."""
 
     post_list = Post.objects.all()
-    page_obj = pagination(request, post_list, settings.ARTICLES_SELECTION)
+    page_obj = pagination(request, post_list, PAGINATION_NUM)
     context = {
         'page_obj': page_obj
     }
@@ -31,7 +32,7 @@ def group_posts(request, slug):
 
     group = get_object_or_404(Group, slug=slug)
     posts = group.posts.all()
-    page_obj = pagination(request, posts, settings.ARTICLES_SELECTION)
+    page_obj = pagination(request, posts, PAGINATION_NUM)
     context = {
         'group': group,
         'page_obj': page_obj,
@@ -45,7 +46,7 @@ def profile(request, username):
     """
     author = get_object_or_404(User, username=username)
     user = author.posts.all()
-    page_obj = pagination(request, user, settings.ARTICLES_SELECTION)
+    page_obj = pagination(request, user, PAGINATION_NUM)
 
     context = {'author': author,
                'page_obj': page_obj,
@@ -118,7 +119,7 @@ def follow_index(request):
     post_list = Post.objects.filter(
         author__following__user=user
     )
-    paginator = Paginator(post_list, settings.ARTICLES_SELECTION)
+    paginator = Paginator(post_list, PAGINATION_NUM)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
     context = {
