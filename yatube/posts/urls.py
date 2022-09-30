@@ -57,8 +57,10 @@ urlpatterns = [
     path(
         "404/",
         views.page_not_found,
-        name="404"),
+        name="404"
+    ),
     path("500/",
         views.server_error,
-        name="500")
+        name="500"
+    )
 ]
