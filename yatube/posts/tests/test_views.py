@@ -30,7 +30,7 @@ class PostsPagesTests(TestCase):
 
         post_args = 1
         cls.index_url = ('posts:index', 'posts/index.html',
-                        post_args)
+                         post_args)
         cls.group_url = ('posts:group_list', 'posts/group_list.html',
                          cls.group.slug)
         cls.profile_url = ('posts:profile', 'posts/profile.html',
