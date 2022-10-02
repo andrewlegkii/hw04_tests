@@ -50,7 +50,7 @@ class PostURLTests(TestCase):
     def test_public_pages(self):
         for url, template in self.public_urls:
             response = self.guest_client.get(url)
-            self.assertEqual(response.status_code, template)
+            self.assertEqual(response.status_code, template, 200)
 
     # Проверяем доступ для авторизованного пользователя и автора
     def test_private_pages(self):
