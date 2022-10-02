@@ -48,9 +48,9 @@ class PostURLTests(TestCase):
 
     # Проверяем общедоступные страницы
     def test_public_pages(self):
-        for url, template in self.public_urls:
-            response = self.guest_client.get(url)
-            self.assertEqual(response.status_code, template, 200)
+        for data in self.public_urls:
+            response = self.guest_client.get(data[0])
+            self.assertEqual(response.status_code, 200)
 
     # Проверяем доступ для авторизованного пользователя и автора
     def test_private_pages(self):
