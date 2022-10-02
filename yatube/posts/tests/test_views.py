@@ -2,8 +2,6 @@ from django.contrib.auth import get_user_model
 from django.test import Client, TestCase
 from django.urls import reverse
 from django import forms
-from django.core.paginator import Paginator
-from yatube.posts.views import pagination
 
 from yatube.yatube.settings import POSTS_PER_PAGE
 from yatube.yatube.settings import PAGE_TEST_OFFSET
@@ -68,12 +66,12 @@ class PostsPagesTests(TestCase):
                 reverse(self.group_url[0], kwargs={'slug': self.group_url[2]}):
                 self.group_url[1],
                 reverse(self.profile_url[0],
-                        kwargs={'username': self.profile_url[2]}):
+                    kwargs={'username': self.profile_url[2]}):
                 self.profile_url[1],
                 reverse(self.post_url[0], kwargs={'post_id': self.post_url[2]}):
                 self.post_url[1],
                 reverse(self.edit_post_url[0],
-                        kwargs={'post_id': self.edit_post_url[2]}):
+                    kwargs={'post_id': self.edit_post_url[2]}):
                 self.edit_post_url[1],
                 reverse(self.new_post_url[0]): self.new_post_url[1],
             }
