@@ -63,7 +63,7 @@ class PostsPagesTests(TestCase):
         for url, template in self.paginated_urls:
             response = self.authorized_client.get(url)
             self.assertTemplateUsed(
-                                    response, 
+                                    response,
                                     template,
                                     self.index_url,
                                     self.group_url,
@@ -71,7 +71,7 @@ class PostsPagesTests(TestCase):
                                     self.post_url,
                                     self.new_post_url,
                                     self.edit_post_url
-                                    )
+            )
 
     # Проверка словаря контекста страниц
     def test_index_page_show_correct_context(self):
