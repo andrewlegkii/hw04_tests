@@ -46,7 +46,6 @@ class PostsPagesTests(TestCase):
             cls.profile_url,
             cls.post_url,
             cls.new_post_url,
-            cls.edit_post_url
         )
 
     def setUp(self):
