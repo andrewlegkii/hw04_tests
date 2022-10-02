@@ -1,15 +1,16 @@
-from email import utils
+from typing_extensions import Self
 from django.contrib.auth import get_user_model
 from django.test import Client, TestCase
 from django.urls import reverse
 from django import forms
-from yatube.yatube.settings import POSTS_PER_PAGE
+
+from yatube.yatube.settings import  POSTS_PER_PAGE
+from yatube.yatube.settings import PAGE_TEST_OFFSET
 
 from posts.models import Post, Group
 
 User = get_user_model()
 
-PAGE_TEST_OFFSET = 1
 
 class PostsPagesTests(TestCase):
     @classmethod
@@ -24,14 +25,14 @@ class PostsPagesTests(TestCase):
             description="проверка описания0",
         )
 
-        for i in range(13):
+        for i in range(POSTS_PER_PAGE):
             cls.post = Post.objects.create(
                 text='Тестовый текст0',
                 author=cls.user,
                 group=Group.objects.get(slug='test_slug0'),
             )
 
-        post_args = 1
+        post_args = PAGE_TEST_OFFSET
         cls.index_url = ('posts:index', 'posts/index.html', None)
         cls.group_url = ('posts:group_list', 'posts/group_list.html',
                          cls.group.slug)
@@ -57,23 +58,22 @@ class PostsPagesTests(TestCase):
         self.authorized_client.force_login(self.user)
 
     # Проверяем используемые шаблоны
-    def test_pages_uses_correct_template(self, paginated_urls):
+    def test_pages_uses_correct_template(self):
         """URL-адрес использует соответствующий шаблон."""
-        for url, template, agr in paginated_urls:
         # Собираем в словарь пары "имя_html_шаблона: reverse(name)"
-            templates_pages_names = {
-                reverse(self.index_url[0]): self.index_url[1],
-                reverse(self.group_url[0], kwargs={'slug': self.group_url[2]}):
-                self.group_url[1],
-                reverse(self.profile_url[0],
+        templates_pages_names = {
+            reverse(self.index_url[0]): self.index_url[1],
+            reverse(self.group_url[0], kwargs={'slug': self.group_url[2]}):
+            self.group_url[1],
+            reverse(self.profile_url[0],
                     kwargs={'username': self.profile_url[2]}):
-                self.profile_url[1],
-                reverse(self.post_url[0], kwargs={'post_id': self.post_url[2]}):
-                self.post_url[1],
-                reverse(self.edit_post_url[0],
+            self.profile_url[1],
+            reverse(self.post_url[0], kwargs={'post_id': self.post_url[2]}):
+            self.post_url[1],
+            reverse(self.edit_post_url[0],
                     kwargs={'post_id': self.edit_post_url[2]}):
-                self.edit_post_url[1],
-                reverse(self.new_post_url[0]): self.new_post_url[1],
+            self.edit_post_url[1],
+            reverse(self.new_post_url[0]): self.new_post_url[1],
         }
         # Проверяем, что при обращении к name вызывается HTML-шаблон
         for reverse_name, template in templates_pages_names.items():
@@ -95,9 +95,9 @@ class PostsPagesTests(TestCase):
             with self.subTest(template=template):
                 response = self.guest_client.get(template)
                 first_object = response.context['page_obj'][0]
-                task_author_0 = first_object
-                task_text_0 = first_object
-                task_group_0 = first_object
+                task_author_0 = first_object.author.username
+                task_text_0 = first_object.text
+                task_group_0 = first_object.group.title
                 self.assertEqual(task_author_0, 'Test_User')
                 self.assertEqual(task_text_0, 'Тестовый текст0')
                 self.assertEqual(task_group_0, 'группа0')
