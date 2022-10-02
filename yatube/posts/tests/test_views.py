@@ -62,8 +62,7 @@ class PostsPagesTests(TestCase):
         # Собираем в словарь пары "имя_html_шаблона: reverse(name)"
         for url, template in self.paginated_urls:
             response = self.authorized_client.get(url)
-            self.assertTemplateUsed(
-                                    response,
+            self.assertTemplateUsed(response,
                                     template,
                                     self.index_url,
                                     self.group_url,
