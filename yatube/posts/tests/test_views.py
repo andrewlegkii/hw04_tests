@@ -29,7 +29,7 @@ class PostsPagesTests(TestCase):
             )
 
         post_args = 1
-        cls.index_url = ('posts:index', 'posts/index.html', None)
+        cls.index_url = ('posts:/index', 'posts/index.html', None)
         cls.group_url = ('posts:group_list', 'posts/group_list.html',
                          cls.group.slug)
         cls.profile_url = ('posts:profile', 'posts/profile.html',
@@ -60,16 +60,9 @@ class PostsPagesTests(TestCase):
     def test_pages_uses_correct_template(self):
         """URL-адрес использует соответствующий шаблон."""
         # Собираем в словарь пары "имя_html_шаблона: reverse(name)"
-        for url in self.paginated_urls:
+        for url, tamplate in self.paginated_urls:
             response = self.authorized_client.get(url)
-            self.assertTemplateUsed(
-                                    self.index_url,
-                                    self.group_url,
-                                    self.profile_url,
-                                    self.post_url,
-                                    self.new_post_url,
-                                    self.edit_post_url
-            )
+            self.assertTemplateUsed(response, tamplate)
 
     # Проверка словаря контекста страниц
     def test_index_page_show_correct_context(self):
