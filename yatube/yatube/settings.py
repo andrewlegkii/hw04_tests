@@ -104,3 +104,5 @@ EMAIL_BACKEND = 'django.core.mail.backends.filebased.EmailBackend'
 EMAIL_FILE_PATH = os.path.join(BASE_DIR, 'sent_emails')
 
 PAGINATION_NUM = 10
+
+POSTS_PER_PAGE = 2

@@ -14,7 +14,6 @@ class PostURLTests(TestCase):
         cls.user = User.objects.create(username="Test_User",)
 
         cls.group = Group.objects.create(
-            id="10",
             title="группа",
             slug="one_group",
             description="проверка описания",
@@ -22,7 +21,6 @@ class PostURLTests(TestCase):
 
         cls.post = Post.objects.create(
             text='Тестовый текст',
-            author=User.objects.get(username="Test_User"),
             group=Group.objects.get(title="группа"),
         )
 
@@ -49,9 +47,8 @@ class PostURLTests(TestCase):
 
     # Проверяем общедоступные страницы
     def test_public_pages(self):
-        for data in self.public_urls:
-            print(data[0])
-            response = self.guest_client.get(data[0])
+        for url in self.public_urls:
+            response = self.guest_client.get(url)
             self.assertEqual(response.status_code, 200)
 
     # Проверяем доступ для авторизованного пользователя и автора
