@@ -62,7 +62,16 @@ class PostsPagesTests(TestCase):
         # Собираем в словарь пары "имя_html_шаблона: reverse(name)"
         for url, template in self.paginated_urls:
             response = self.authorized_client.get(url)
-            self.assertTemplateUsed(response, template)
+            self.assertTemplateUsed(
+                                    response, 
+                                    template,
+                                    self.index_url,
+                                    self.group_url,
+                                    self.profile_url,
+                                    self.post_url,
+                                    self.new_post_url,
+                                    self.edit_post_url
+                                    )
 
     # Проверка словаря контекста страниц
     def test_index_page_show_correct_context(self):
