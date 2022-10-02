@@ -3,8 +3,8 @@ from django.test import Client, TestCase
 from django.urls import reverse
 from django import forms
 
-from yatube.yatube.settings import POSTS_PER_PAGE
-from yatube.yatube.settings import PAGE_TEST_OFFSET
+from yatube.settings import POSTS_PER_PAGE
+from yatube.settings import PAGE_TEST_OFFSET
 
 from posts.models import Post, Group
 
