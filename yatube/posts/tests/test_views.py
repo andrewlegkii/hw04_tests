@@ -59,14 +59,12 @@ class PostsPagesTests(TestCase):
         # Собираем в словарь пары "имя_html_шаблона: reverse(name)"
         templates_pages_names = {
             reverse(self.index_url[0]): self.index_url[1],
-            reverse(self.group_url[0],
-                    kwargs={'slug': self.group_url[2]}):
+            reverse(self.group_url[0], kwargs={'slug': self.group_url[2]}):
             self.group_url[1],
             reverse(self.profile_url[0],
                     kwargs={'username': self.profile_url[2]}):
             self.profile_url[1],
-            reverse(self.post_url[0],
-                    kwargs={'post_id': self.post_url[2]}):
+            reverse(self.post_url[0], kwargs={'post_id': self.post_url[2]}):
             self.post_url[1],
             reverse(self.edit_post_url[0],
                     kwargs={'post_id': self.edit_post_url[2]}):
