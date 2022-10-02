@@ -43,9 +43,7 @@ class PostsPagesTests(TestCase):
         cls.paginated_urls = (
             cls.index_url,
             cls.group_url,
-            cls.profile_url,
-            cls.post_url,
-            cls.new_post_url,
+            cls.profile_url
         )
 
     def setUp(self):
