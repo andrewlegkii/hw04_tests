@@ -58,8 +58,6 @@ class PostsPagesTests(TestCase):
         """URL-адрес использует соответствующий шаблон."""
         # Собираем в словарь пары "имя_html_шаблона: reverse(name)"
         for url, template, agr in self.paginated_urls:
-            response = self.authorized_client.get(url)
-            self.assertTemplateUsed(response, template, agr)
             templates_pages_names = {
                 reverse(self.index_url[0]): self.index_url[1],
                 reverse(self.group_url[0],
