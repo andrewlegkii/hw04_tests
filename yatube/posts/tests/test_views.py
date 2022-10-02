@@ -60,6 +60,27 @@ class PostsPagesTests(TestCase):
         for url, template, agr in self.paginated_urls:
             response = self.authorized_client.get(url)
             self.assertTemplateUsed(response, template, agr)
+            templates_pages_names = {
+                reverse(self.index_url[0]): self.index_url[1],
+                reverse(self.group_url[0],
+                        kwargs={'slug': self.group_url[2]}):
+                self.group_url[1],
+                reverse(self.profile_url[0],
+                        kwargs={'username': self.profile_url[2]}):
+                self.profile_url[1],
+                reverse(self.post_url[0],
+                        kwargs={'post_id': self.post_url[2]}):
+                self.post_url[1],
+                reverse(self.edit_post_url[0],
+                        kwargs={'post_id': self.edit_post_url[2]}):
+                self.edit_post_url[1],
+                reverse(self.new_post_url[0]): self.new_post_url[1],
+            }
+        # Проверяем, что при обращении к name вызывается HTML-шаблон
+        for reverse_name, template in templates_pages_names.items():
+            with self.subTest(reverse_name=reverse_name):
+                response = self.authorized_client.get(reverse_name)
+                self.assertTemplateUsed(response, template)
 
     # Проверка словаря контекста страниц
     def test_index_page_show_correct_context(self):
