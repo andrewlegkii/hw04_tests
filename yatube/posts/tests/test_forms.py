@@ -44,7 +44,7 @@ class PostFormTests(TestCase):
             'text': 'Новый тестовый текст',
         }
         self.authorized_client.post(
-            reverse('posts:post_edit', kwargs={'post_id': str}),),
+            reverse('posts:post_edit', kwargs={'post_id': str}),
             data=form_data,
             follow=True
         )
