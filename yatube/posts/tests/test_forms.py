@@ -44,11 +44,11 @@ class PostFormTests(TestCase):
             'text': 'Новый тестовый текст',
         }
         self.authorized_client.post(
-            reverse('posts:post_edit', kwargs={'post_id': '1'}),
+            reverse('posts:post_edit'),
             data=form_data,
             follow=True
         )
-        new_post = Post.objects.get(id=1)
+        new_post = Post.objects.get()
         self.assertNotEqual(old_post.text, new_post.text)
 
     def test_unauth_user_cant_publish_post(self):
