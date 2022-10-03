@@ -46,6 +46,11 @@ class PostsPagesTests(TestCase):
             cls.group_url,
             cls.profile_url
         )
+        cls.pages_names = (
+            cls.index_url,
+            cls.group_url,
+            cls.profile_url
+        )
 
     def setUp(self):
         # Создаем неавторизованный+авторизованый клиент
@@ -133,13 +138,7 @@ class PostsPagesTests(TestCase):
 
     def test_urls_first_page_contains_10_records(self):
         """10 постов на страницу у index, group_page and profile"""
-        pages_names = [
-            reverse(self.index_url[0]),
-            reverse(self.group_url[0], kwargs={'slug': self.group_url[2]}),
-            reverse(self.profile_url[0],
-                    kwargs={'username': self.profile_url[2]}),
-        ]
-        for template in pages_names:
+        for template in self.pages_names:
             with self.subTest(template=template):
                 response = self.guest_client.get(template)
                 self.assertEqual(len(response.context['page_obj']), 10)
