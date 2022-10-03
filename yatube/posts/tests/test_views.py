@@ -1,4 +1,3 @@
-from importlib.resources import path
 from django.contrib.auth import get_user_model
 from django.test import Client, TestCase
 from django.urls import reverse
@@ -59,9 +58,9 @@ class PostsPagesTests(TestCase):
     def test_pages_uses_correct_template(self):
         """URL-адрес использует соответствующий шаблон."""
         # Собираем в словарь пары "имя_html_шаблона: reverse(name)"
-        for tamplate, path, arg in self.paginated_urls:
+        for tamplate, url in self.paginated_urls:
             response = self.authorized_client.get('/index')
-            self.assertTemplateUsed(response, path, tamplate, arg)
+            self.assertTemplateUsed(response, tamplate, url)
 
     # Проверка словаря контекста страниц
     def test_index_page_show_correct_context(self):
