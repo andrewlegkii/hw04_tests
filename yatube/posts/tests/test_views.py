@@ -46,11 +46,12 @@ class PostsPagesTests(TestCase):
             cls.group_url,
             cls.profile_url
         )
-        cls.pages_names = (
-            cls.index_url,
-            cls.group_url,
-            cls.profile_url
-        )
+        cls.pages_names = [
+            reverse(cls.index_url[0]),
+            reverse(cls.group_url[0], kwargs={'slug': cls.group_url[2]}),
+            reverse(cls.profile_url[0],
+                    kwargs={'username': cls.profile_url[2]}),
+        ]
 
     def setUp(self):
         # Создаем неавторизованный+авторизованый клиент
