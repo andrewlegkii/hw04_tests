@@ -59,7 +59,7 @@ class PostsPagesTests(TestCase):
         """URL-адрес использует соответствующий шаблон."""
         # Собираем в словарь пары "имя_html_шаблона: reverse(name)"
         for url, tamplate, arg in self.paginated_urls:
-            response = self.authorized_client.get(url)
+            response = self.authorized_client.get('/index/%d'(url))
             self.assertTemplateUsed(response, arg, tamplate)
 
     # Проверка словаря контекста страниц
