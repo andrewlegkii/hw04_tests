@@ -66,6 +66,14 @@ class PostsPagesTests(TestCase):
             cls.edit_post_url[1],
             reverse(cls.new_post_url[0]): cls.new_post_url[1],
         }
+        cls.reverse_page_names_post = {
+            reverse(cls.index_url[0]): cls.group_url[2],
+            reverse(cls.group_url[0], kwargs={'slug': cls.group_url[2]}):
+            cls.group_url[2],
+            reverse(cls.profile_url[0],
+                    kwargs={'username': cls.profile_url[2]}):
+            cls.group_url[2]
+        }
 
     def setUp(self):
         # Создаем неавторизованный+авторизованый клиент
@@ -86,14 +94,7 @@ class PostsPagesTests(TestCase):
     # Проверка словаря контекста страниц
     def test_index_page_show_correct_context(self):
         """index,group_list,profile с правильным контекстом."""
-        pages_names = [
-            reverse(self.index_url[0]),
-            reverse(self.group_url[0], kwargs={'slug': self.group_url[2]}),
-            reverse(self.profile_url[0],
-                    kwargs={'username': self.profile_url[2]}),
-        ]
-
-        for template in pages_names:
+        for template in self.pages_names:
             with self.subTest(template=template):
                 response = self.guest_client.get(template)
                 first_object = response.context['page_obj'][0]
@@ -145,28 +146,14 @@ class PostsPagesTests(TestCase):
 
     def test_urls_second_page_contains_3_records(self):
         """3 поста на второй странице index, group_page and profile"""
-        pages_names = [
-            reverse(self.index_url[0]),
-            reverse(self.group_url[0], kwargs={'slug': self.group_url[2]}),
-            reverse(self.profile_url[0],
-                    kwargs={'username': self.profile_url[2]}),
-        ]
-        for template in pages_names:
+        for template in self.pages_names:
             with self.subTest(template=template):
                 response = self.guest_client.get(template + '?page=2')
                 self.assertEqual(len(response.context['page_obj']), 3)
 
     def test_post_in_index_group_profile_after_create(self):
         """созданный пост появился на главной, в группе, в профиле."""
-        reverse_page_names_post = {
-            reverse(self.index_url[0]): self.group_url[2],
-            reverse(self.group_url[0], kwargs={'slug': self.group_url[2]}):
-            self.group_url[2],
-            reverse(self.profile_url[0],
-                    kwargs={'username': self.profile_url[2]}):
-            self.group_url[2]
-        }
-        for value, expected in reverse_page_names_post.items():
+        for value, expected in self.reverse_page_names_post.items():
             response = self.authorized_client.get(value)
             for object in response.context['page_obj']:
                 post_group = object.group.slug
