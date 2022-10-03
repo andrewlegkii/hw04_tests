@@ -52,6 +52,20 @@ class PostsPagesTests(TestCase):
             reverse(cls.profile_url[0],
                     kwargs={'username': cls.profile_url[2]}),
         ]
+        cls.templates_pages_names = {
+            reverse(cls.index_url[0]): cls.index_url[1],
+            reverse(cls.group_url[0], kwargs={'slug': cls.group_url[2]}):
+            cls.group_url[1],
+            reverse(cls.profile_url[0],
+                    kwargs={'username': cls.profile_url[2]}):
+            cls.profile_url[1],
+            reverse(cls.post_url[0], kwargs={'post_id': cls.post_url[2]}):
+            cls.post_url[1],
+            reverse(cls.edit_post_url[0],
+                    kwargs={'post_id': cls.edit_post_url[2]}):
+            cls.edit_post_url[1],
+            reverse(cls.new_post_url[0]): cls.new_post_url[1],
+        }
 
     def setUp(self):
         # Создаем неавторизованный+авторизованый клиент
@@ -63,23 +77,8 @@ class PostsPagesTests(TestCase):
     # Проверяем используемые шаблоны
     def test_pages_uses_correct_template(self):
         """URL-адрес использует соответствующий шаблон."""
-        # Собираем в словарь пары "имя_html_шаблона: reverse(name)"
-        templates_pages_names = {
-            reverse(self.index_url[0]): self.index_url[1],
-            reverse(self.group_url[0], kwargs={'slug': self.group_url[2]}):
-            self.group_url[1],
-            reverse(self.profile_url[0],
-                    kwargs={'username': self.profile_url[2]}):
-            self.profile_url[1],
-            reverse(self.post_url[0], kwargs={'post_id': self.post_url[2]}):
-            self.post_url[1],
-            reverse(self.edit_post_url[0],
-                    kwargs={'post_id': self.edit_post_url[2]}):
-            self.edit_post_url[1],
-            reverse(self.new_post_url[0]): self.new_post_url[1],
-        }
         # Проверяем, что при обращении к name вызывается HTML-шаблон
-        for reverse_name, template in templates_pages_names.items():
+        for reverse_name, template in self.templates_pages_names.items():
             with self.subTest(reverse_name=reverse_name):
                 response = self.authorized_client.get(reverse_name)
                 self.assertTemplateUsed(response, template)
